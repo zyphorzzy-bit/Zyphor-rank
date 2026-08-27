@@ -1,0 +1,20 @@
+{
+  "name": "bot-rank-zyphor",
+  "version": "1.0.0",
+  "description": "Bot de Ranking de Call, Mensagens e Status Zyphor Apps para Discord",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [
+    "discord",
+    "bot",
+    "ranking",
+    "zyphor"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^14.14.1"
+  }
+}
