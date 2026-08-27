@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const { 
     Client, 
     GatewayIntentBits, 
@@ -15,7 +17,7 @@ const client = new Client({
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.MessageContent,
         GatewayIntentBits.GuildVoiceStates,
-        GatewayIntentBits.GuildPresences // Necessário para ler o status roxo de Stream!
+        GatewayIntentBits.GuildPresences
     ]
 });
 
@@ -144,7 +146,7 @@ client.on('messageCreate', async (message) => {
 
     const comando = message.content.toLowerCase();
 
-    // z.rank call (Inclui o tempo em Call + tempo do Status Roxo Zyphor Apps)
+    // z.rank call
     if (comando === 'z.rank call') {
         const guildMembers = Object.keys({ ...voiceTime, ...callStartTime, ...streamStatusTime, ...streamStatusStartTime });
         
@@ -211,7 +213,6 @@ client.on('presenceUpdate', (oldPresence, newPresence) => {
     if (!newPresence || newPresence.guild.id !== GUILD_PERMITIDA) return;
     const userId = newPresence.userId;
 
-    // Procura por atividades do tipo STREAMING (Tipo 1 / Roxo)
     const isStreamingZyphor = newPresence.activities.some(act => 
         act.type === ActivityType.Streaming && 
         (act.name?.toLowerCase().includes('zyphor') || act.state?.toLowerCase().includes('zyphor') || act.details?.toLowerCase().includes('zyphor'))
@@ -222,12 +223,9 @@ client.on('presenceUpdate', (oldPresence, newPresence) => {
         (act.name?.toLowerCase().includes('zyphor') || act.state?.toLowerCase().includes('zyphor') || act.details?.toLowerCase().includes('zyphor'))
     );
 
-    // Ativou o status roxo Zyphor
     if (!wasStreamingZyphor && isStreamingZyphor) {
         streamStatusStartTime[userId] = Date.now();
-    } 
-    // Desativou o status roxo Zyphor
-    else if (wasStreamingZyphor && !isStreamingZyphor) {
+    } else if (wasStreamingZyphor && !isStreamingZyphor) {
         if (streamStatusStartTime[userId]) {
             const spent = Math.floor((Date.now() - streamStatusStartTime[userId]) / 1000);
             streamStatusTime[userId] = (streamStatusTime[userId] || 0) + spent;
@@ -236,4 +234,6 @@ client.on('presenceUpdate', (oldPresence, newPresence) => {
     }
 });
 
-client.login('SEU_TOKEN_AQUI');
+// Carrega o token das variáveis de ambiente da SquareCloud (aceita TOKEN ou DISCORD_TOKEN)
+const token = process.env.TOKEN || process.env.DISCORD_TOKEN;
+client.login(token);
