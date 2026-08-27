@@ -55,7 +55,14 @@ function getRealTimeStreamStatus(userId) {
     return total;
 }
 
+// 🟢 EVENTO READY - AQUI DEFINE O STATUS ROXO (STREAMING) DO BOT
 client.on('ready', async () => {
+    // Coloca o status do perfil do bot como ROXO (Transmitindo)
+    client.user.setActivity('Zyphor Apps', {
+        type: ActivityType.Streaming,
+        url: 'https://www.twitch.tv/discord' // Link necessário para o Discord ativar a cor roxa
+    });
+
     const guild = client.guilds.cache.get(GUILD_PERMITIDA);
     if (guild) {
         await guild.commands.create(
@@ -70,7 +77,7 @@ client.on('ready', async () => {
                 .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
         );
     }
-    console.log(`<:zyphor:1540096483276095621> Zyphor Apps Bot Online!`);
+    console.log(`<:zyphor:1540096483276095621> Zyphor Apps Bot Online com Status Roxo!`);
 });
 
 // Interação /config
@@ -122,7 +129,7 @@ client.on('interactionCreate', async (interaction) => {
                 .setColor('#2b2d31')
                 .setDescription('<:linkexterno:1539124690709385330> Comandos disponíveis:')
                 .addFields(
-                    { name: '<:horrio:1534611997335883886> `z.rank call`', value: 'Exibe o ranking de tempo em voz + tempo de status roxo Zyphor Apps.' },
+                    { name: '<:horrio:1534611997335883886> `z.rank call`', value: 'Exibe o ranking de tempo em voz.' },
                     { name: '<:ID:1534611999085039786> `z.rank sms`', value: 'Exibe o ranking de mensagens enviadas.' },
                     { name: '<:arquivo:1539124693460713552> `/config`', value: 'Painel administrativo de configurações.' }
                 );
@@ -208,7 +215,7 @@ client.on('voiceStateUpdate', (oldState, newState) => {
     }
 });
 
-// Monitoramento do Status Roxo "Transmitindo Zyphor Apps" (Rich Presence)
+// Monitoramento do Status Roxo dos Membros
 client.on('presenceUpdate', (oldPresence, newPresence) => {
     if (!newPresence || newPresence.guild.id !== GUILD_PERMITIDA) return;
     const userId = newPresence.userId;
@@ -234,6 +241,5 @@ client.on('presenceUpdate', (oldPresence, newPresence) => {
     }
 });
 
-// Carrega o token das variáveis de ambiente da SquareCloud (aceita TOKEN ou DISCORD_TOKEN)
 const token = process.env.TOKEN || process.env.DISCORD_TOKEN;
 client.login(token);
